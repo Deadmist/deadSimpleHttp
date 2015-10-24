@@ -27,35 +27,35 @@ public class Request {
      * @throws RequestException The data could not be parsed as a valid http request
      */
     public Request(InputStream in) throws IOException, RequestException {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 
-            String firstline = reader.readLine();
-            if (firstline == null) throw new IOException("No data received");
-            this.method = firstline.split(" ")[0].toUpperCase();
-            if (!Arrays.asList(methods).contains(this.method)) throw new RequestException("Method not supported");
+        String firstline = reader.readLine();
+        if (firstline == null) throw new IOException("No data received");
+        this.method = firstline.split(" ")[0].toUpperCase();
+        if (!Arrays.asList(methods).contains(this.method)) throw new RequestException("Method not supported");
 
-            //Extract requested file path
-            url = firstline.split(" ")[1];
-            file = url.replace("%20", " ");
-            this.queryString = file.split("\\?").length == 2 ? file.split("\\?")[1] : ""; //Assign the query string or "" if no query string exists
-            file = file.split("\\?")[0]; //Remove the query string
+        //Extract requested file path
+        url = firstline.split(" ")[1];
+        file = url.replace("%20", " ");
+        this.queryString = file.split("\\?").length == 2 ? file.split("\\?")[1] : ""; //Assign the query string or "" if no query string exists
+        file = file.split("\\?")[0]; //Remove the query string
 
-            if (file.equals("/")) file = "index.html";
+        if (file.equals("/")) file = "index.html";
 
-            this.httpVersion = firstline.split(" ")[2];
-            this.httpVersion = this.httpVersion.split("/")[1];
+        this.httpVersion = firstline.split(" ")[2];
+        this.httpVersion = this.httpVersion.split("/")[1];
 
-            //Read the rest of the http headers
-            this.headers = parseHeaders(reader);
+        //Read the rest of the http headers
+        this.headers = parseHeaders(reader);
 
-            String tmp = "";
-            if (headers.get("Content-Length") != null) {
-                for (int i = 0; i < Integer.parseInt(headers.get("Content-Length")); i++) {
-                    tmp += (char) reader.read();
-                }
-                this.body = tmp;
+        String tmp = "";
+        if (headers.get("Content-Length") != null) {
+            for (int i = 0; i < Integer.parseInt(headers.get("Content-Length")); i++) {
+                tmp += (char) reader.read();
             }
+            this.body = tmp;
         }
+
     }
 
     /**
