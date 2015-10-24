@@ -97,6 +97,15 @@ public class Request {
         return file;
     }
 
+    /**
+     * Sets the path to the request file
+     * @param file Path to requested file
+     */
+    public void setFile(String file) {
+        this.file = file;
+    }
+
+
     private HashMap<String, String> parseHeaders(BufferedReader reader) throws IOException {
         HashMap<String, String> header = new HashMap<>();
 
