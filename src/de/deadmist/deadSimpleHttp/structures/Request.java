@@ -105,6 +105,13 @@ public class Request {
         this.file = file;
     }
 
+    /**
+     * Returns the headers received with this request
+     * @return Headers
+     */
+    public HashMap<String, String> getHeaders() {
+        return this.headers;
+    }
 
     private HashMap<String, String> parseHeaders(BufferedReader reader) throws IOException {
         HashMap<String, String> header = new HashMap<>();
