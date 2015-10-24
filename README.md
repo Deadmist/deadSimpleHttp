@@ -83,5 +83,4 @@ public class main {
 ###Logging
 
 This library uses [deLog](https://github.com/Deadmist/deLog) for logging.
-The deLog library is embedded into the deadSimpleHttp.jar, so you can easily use it together.
-For setting logging levels etc refer to the deLog documentation.
+You need to put the deLog.jar with this jar for it to work correctly
