@@ -21,10 +21,31 @@ public class FileUtils {
      */
     public static String getMimeType(File file) {
         try {
-            return Files.probeContentType(file.toPath());
+            String type = Files.probeContentType(file.toPath());
+            if (type == null) {
+                type = mimeTypeByExtension(file.getName());
+            }
+            return type;
         } catch (IOException e) {
             Logger.e("GETMIMETYPE", "Error parsing content type from file: " + file.getAbsolutePath(), e);
             return null;
+        }
+    }
+
+    private static String mimeTypeByExtension(String file) {
+        String ext = file.split("\\.")[file.split("\\.").length - 1];
+        switch (ext) {
+            case "css":     return "text/css";
+            case "html":
+            case "htm":
+            case "shtml":   return "text/html";
+            case "js":      return "text/javascript";
+            case "png":     return "image/png";
+            case "jpg":
+            case "jpeg":    return "image/jpeg";
+            case "zip":     return "application/zip";
+            case "mp3":     return "audio/mpeg";
+            default: return "";
         }
     }
 
