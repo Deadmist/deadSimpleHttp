@@ -107,11 +107,12 @@ public class HTTPSServer extends Thread {
                 IncomingHandler handler = new IncomingHandler(socket, handlers);
                 handler.run();
             } catch (IOException e) {
-                e.printStackTrace();
-                Logger.i("HTTPS", "Stopping server");
+                if (!interrupted) { //Server should not have stopped
+                    Logger.e("HTTPS", "Exception waiting for connections", e);
+                }
             }
-
         }
+        Logger.i("HTTPS", "Stopping server");
     }
 
     /**
@@ -120,6 +121,11 @@ public class HTTPSServer extends Thread {
     @Override
     public void interrupt() {
         super.interrupt();
+        try {
+            serverSocket.close();
+        } catch (IOException e) {
+            Logger.w("HTTPS", "Couldn't close server socket", e);
+        }
         this.interrupted = true;
     }
 }

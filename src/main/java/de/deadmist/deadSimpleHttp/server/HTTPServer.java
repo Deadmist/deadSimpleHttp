@@ -85,7 +85,9 @@ public class HTTPServer extends Thread {
                 IncomingHandler handler = new IncomingHandler(socket, handlers);
                 handler.run();
             } catch (IOException e) {
-                e.printStackTrace();
+                if (!interrupted) {
+                    Logger.e("HTTP", "Exception while waiting for connection", e);
+                }
             }
         }
         Logger.i("HTTP", "Stopping server");
@@ -97,6 +99,11 @@ public class HTTPServer extends Thread {
     @Override
     public void interrupt() {
         super.interrupt();
+        try {
+            serverSocket.close();
+        } catch (IOException e) {
+            Logger.w("HTTP", "Couldn't close server socket", e);
+        }
         this.interrupted = true;
     }
 }
