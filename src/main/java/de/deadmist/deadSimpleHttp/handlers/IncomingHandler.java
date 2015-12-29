@@ -4,6 +4,7 @@ import de.deadmist.deLog.Logger;
 import de.deadmist.deadSimpleHttp.errors.RequestException;
 import de.deadmist.deadSimpleHttp.structures.Request;
 import de.deadmist.deadSimpleHttp.structures.Response;
+import de.deadmist.deadSimpleHttp.util.StandardResponses;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -63,9 +64,14 @@ public class IncomingHandler extends Thread {
             if (biggestMatch == 0 && biggestMatchingHandler == null) {
                 biggestMatchingHandler = new HandlerMissingHandler(file);
             }
-
-            Response response = biggestMatchingHandler.processRequest(request);
-
+            Response response;
+            try {
+                response = biggestMatchingHandler.processRequest(request);
+            } catch (Exception e) {
+                //If something goes wrong handling this
+                Logger.e("INCOMING", "Exception in response handler", e);
+                response = StandardResponses.create500();
+            }
             try (OutputStream stream = socket.getOutputStream()) {
                 stream.write(response.getBytes());
                 stream.flush();
